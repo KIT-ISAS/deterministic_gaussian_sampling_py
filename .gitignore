@@ -1,0 +1,4 @@
+__pycache__/
+*.py[cod]
+*.pyo
+/src/deterministic_gaussian_sampling/lib
