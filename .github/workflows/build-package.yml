@@ -16,7 +16,7 @@ jobs:
           out-file-path: 'deterministicGaussianSamplingLibs'
           token: ${{ secrets.GITHUB_TOKEN }}
     
-      - name: ppload downloaded libs as artifact
+      - name: upload downloaded libs as artifact
         uses: actions/upload-artifact@v4
         with:
           name: deterministicGaussianSampling-libs
@@ -26,7 +26,7 @@ jobs:
     needs: download_releases
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest] #, macos-latest]
+        os: [windows-latest, ubuntu-latest] #, macos-latest]
         python-version: [3.9, 3.11]
     runs-on: ${{ matrix.os }}
 
