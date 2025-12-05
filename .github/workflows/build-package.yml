@@ -48,6 +48,7 @@ jobs:
       - name: extract ZIP on Unix
         if: ${{ runner.os == 'Linux' }}
         run: |
+            mkdir -p external_libs_unpacked/linux
             unzip external_libs/linux.zip -d external_libs_unpacked/linux
             mkdir -p src/deterministic_gaussian_sampling/lib/linux/bin
             cp -r external_libs_unpacked/linux/lib/* src/deterministic_gaussian_sampling/lib/linux/bin
@@ -56,6 +57,7 @@ jobs:
         if: ${{ runner.os == 'Windows' }}
         shell: pwsh
         run: |
+            New-Item -ItemType Directory -Path external_libs_unpacked\windows -Force
             Expand-Archive -Path external_libs/windows.zip -DestinationPath external_libs_unpacked\windows -Force
             New-Item -ItemType Directory -Path src\deterministic_gaussian_sampling\lib\windows\bin -Force
             Copy-Item external_libs_unpacked\windows\bin\* src\deterministic_gaussian_sampling\lib\windows\bin -Recurse -Force
