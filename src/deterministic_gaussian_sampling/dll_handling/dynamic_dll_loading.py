@@ -1,5 +1,6 @@
-from pathlib import Path
 import ctypes
+import platform
+from pathlib import Path
 
 import deterministic_gaussian_sampling.type_wrapper.ctypes_wrapper as ctypes_wrapper
 
@@ -113,6 +114,17 @@ def _setup_ctypes_dll(cdll: ctypes.CDLL) -> ctypes.CDLL:
 
 def load_dll() -> ctypes.CDLL:
     package_root = Path(__file__).resolve().parent.parent
-    dll_path = package_root / "lib" / "windows" / "bin" / "libapproxLCD.dll"
+
+    system = platform.system()
+    if system == "Windows":
+        dll_rel = Path("lib") / "windows" / "bin" / "libapproxLCD.dll"
+    elif system == "Linux":
+        dll_rel = Path("lib") / "linux" / "bin" / "libapproxLCD.so"
+    elif system == "Darwin":
+        dll_rel = Path("lib") / "macos" / "bin" / "libapproxLCD.dylib"
+    else:
+        raise RuntimeError(f"Unsupported OS: {system}")
+    
+    dll_path = package_root / dll_rel
 
     return _setup_ctypes_dll(ctypes.CDLL(dll_path))

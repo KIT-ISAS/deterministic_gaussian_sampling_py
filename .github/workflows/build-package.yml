@@ -7,9 +7,6 @@ jobs:
   download_releases:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout repo
-        uses: actions/checkout@v4
-
       - name: download release asset from deterministicGaussianSampling
         uses: robinraju/release-downloader@v1
         with:
@@ -18,6 +15,92 @@ jobs:
           fileName: '*.zip'
           out-file-path: 'deterministicGaussianSamplingLibs'
           token: ${{ secrets.GITHUB_TOKEN }}
+    
+      - name: ppload downloaded libs as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deterministicGaussianSampling-libs
+          path: deterministicGaussianSamplingLibs
 
-      - name: list extracted files
-        run: ls -R deterministicGaussianSamplingLibs
+  test:
+    needs: download_releases
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest] #, macos-latest]
+        python-version: [3.9, 3.11]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+
+      - name: set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: get deterministicGaussianSampling libs
+        uses: actions/download-artifact@v4
+        with:
+          name: deterministicGaussianSampling-libs
+          path: external_libs
+
+      - name: extract ZIP on Unix
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+            unzip external_libs/linux.zip -d external_libs_unpacked
+            mkdir -p src/deterministic_gaussian_sampling/lib/linux/bin
+            cp -r external_libs_unpacked/lib/* src/deterministic_gaussian_sampling/lib/linux/bin
+
+      - name: extract ZIP on Windows
+        if: ${{ runner.os == 'Windows' }}
+        shell: pwsh
+        run: |
+            Expand-Archive -Path external_libs/windows.zip -DestinationPath external_libs_unpacked -Force
+            New-Item -ItemType Directory -Path src\deterministic_gaussian_sampling\lib\windows\bin -Force
+            Copy-Item external_libs_unpacked\bin\* src\deterministic_gaussian_sampling\lib\windows\bin -Recurse -Force
+
+      - name: install package
+        run: pip install -e .
+
+      - name: run tests
+        run: pytest -v
+
+
+
+name: Download OS‑specific release and test
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download release asset
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: 'OWNER/REPO'                # replace with actual
+          latest: true
+          fileName: ${{ matrix.os == 'windows-latest' && 'windows.zip' || 'linux.zip' }}
+          out-file-path: external_libs
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract archive
+        if: runner.os != 'Windows'
+        run: unzip external_libs/linux.zip -d external_libs_unpacked
+
+      - name: Extract archive on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Expand-Archive -Path external_libs/windows.zip -DestinationPath external_libs_unpacked -Force
+
+      # ... then run your tests etc.
+
