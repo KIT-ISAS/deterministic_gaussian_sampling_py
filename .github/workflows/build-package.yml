@@ -1,0 +1,23 @@
+name: Build package to PyPi
+
+on:
+  workflow_dispatch:
+
+jobs:
+  download_releases:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+
+      - name: download release asset from deterministicGaussianSampling
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: 'KIT-ISAS/deterministicGaussianSampling'
+          latest: true
+          fileName: '*.zip'
+          out-file-path: 'deterministicGaussianSamplingLibs'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: list extracted files
+        run: ls -R deterministicGaussianSamplingLibs
