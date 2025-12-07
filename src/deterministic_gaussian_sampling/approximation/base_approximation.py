@@ -1,9 +1,10 @@
 import ctypes
 import numpy
+from typing import Optional
 from deterministic_gaussian_sampling.dll_handling import load_dll
 
 class BaseApproximation:
-    cdll: ctypes.CDLL | None = None
+    cdll: Optional[ctypes.CDLL] = None
 
     def __init__(self):
         if self.cdll is None:
