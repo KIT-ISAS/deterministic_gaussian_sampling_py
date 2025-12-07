@@ -1,106 +1,119 @@
+# ctypes_wrapper.py
 import ctypes
-import deterministic_gaussian_sampling.type_wrapper.python_variant as python_variant
+from typing import TYPE_CHECKING
+
+# avoid importing python_variant at top-level to break circular imports
+# (only import it inside functions when needed)
 
 class GslMinimizerResultCTypes(ctypes.Structure):
     _fields_ = [
-        ("initalStepSize", ctypes.c_double),    # initialStepSize
-        ("stepTolerance", ctypes.c_double),     # stepTolerance
-        ("lastXtolAbs", ctypes.c_double),       # lastXtolAbs
-        ("lastXtolRel", ctypes.c_double),       # lastFtolRel
-        ("lastFtolAbs", ctypes.c_double),       # lastFtolAbs
-        ("lastFtolRel", ctypes.c_double),       # lastFtolRel
-        ("lastGtol", ctypes.c_double),          # lastGtol
-        ("xtolAbs", ctypes.c_double),           # xtolAbs
-        ("xtolRel", ctypes.c_double),           # xtolRel
-        ("ftolAbs", ctypes.c_double),           # ftolAbs
-        ("ftolRel", ctypes.c_double),           # ftolRel
-        ("gtol", ctypes.c_double),              # gtol
-        ("iterations", ctypes.c_size_t),        # iterations
-        ("maxIterations", ctypes.c_size_t),     # maxIterations
-        ("elapsedTimeMicro", ctypes.c_size_t),  # elapsedTimeMicro
+        ("initalStepSize", ctypes.c_double),
+        ("stepTolerance", ctypes.c_double),
+        ("lastXtolAbs", ctypes.c_double),
+        ("lastXtolRel", ctypes.c_double),
+        ("lastFtolAbs", ctypes.c_double),
+        ("lastFtolRel", ctypes.c_double),
+        ("lastGtol", ctypes.c_double),
+        ("xtolAbs", ctypes.c_double),
+        ("xtolRel", ctypes.c_double),
+        ("ftolAbs", ctypes.c_double),
+        ("ftolRel", ctypes.c_double),
+        ("gtol", ctypes.c_double),
+        ("iterations", ctypes.c_size_t),
+        ("maxIterations", ctypes.c_size_t),
+        ("elapsedTimeMicro", ctypes.c_size_t),
     ]
 
     @staticmethod
-    def from_py_type(pyT: python_variant.GslMinimizerResultPy) -> GslMinimizerResultCTypes:
+    def from_py_type(pyT: "deterministic_gaussian_sampling.type_wrapper.python_variant.GslMinimizerResultPy") -> "GslMinimizerResultCTypes":
+        # local import to avoid circular import at module import time
+        import deterministic_gaussian_sampling.type_wrapper.python_variant as python_variant  # noqa: F401
         return GslMinimizerResultCTypes(
-            ctypes.c_double(pyT.initalStepSize),    # initialStepSize
-            ctypes.c_double(pyT.stepTolerance),     # stepTolerance
-            ctypes.c_double(pyT.lastXtolAbs),       # lastXtolAbs
-            ctypes.c_double(pyT.lastXtolRel),       # lastFtolRel
-            ctypes.c_double(pyT.lastFtolAbs),       # lastFtolAbs
-            ctypes.c_double(pyT.lastFtolRel),       # lastFtolRel
-            ctypes.c_double(pyT.lastGtol),          # lastGtol
-            ctypes.c_double(pyT.xtolAbs),           # xtolAbs
-            ctypes.c_double(pyT.xtolRel),           # xtolRel
-            ctypes.c_double(pyT.ftolAbs),           # ftolAbs
-            ctypes.c_double(pyT.ftolRel),           # ftolRel
-            ctypes.c_double(pyT.gtol),              # gtol
-            ctypes.c_size_t(pyT.iterations),        # iterations
-            ctypes.c_size_t(pyT.maxIterations),     # maxIterations
-            ctypes.c_size_t(pyT.elapsedTimeMicro)   # elapsedTimeMicro
+            ctypes.c_double(pyT.initalStepSize),
+            ctypes.c_double(pyT.stepTolerance),
+            ctypes.c_double(pyT.lastXtolAbs),
+            ctypes.c_double(pyT.lastXtolRel),
+            ctypes.c_double(pyT.lastFtolAbs),
+            ctypes.c_double(pyT.lastFtolRel),
+            ctypes.c_double(pyT.lastGtol),
+            ctypes.c_double(pyT.xtolAbs),
+            ctypes.c_double(pyT.xtolRel),
+            ctypes.c_double(pyT.ftolAbs),
+            ctypes.c_double(pyT.ftolRel),
+            ctypes.c_double(pyT.gtol),
+            ctypes.c_size_t(pyT.iterations),
+            ctypes.c_size_t(pyT.maxIterations),
+            ctypes.c_size_t(pyT.elapsedTimeMicro),
         )
-    
-    def to_py_type(self) -> python_variant.GslMinimizerResultPy:
+
+    def to_py_type(self):
+        # local import to avoid circular import at module import time
+        import deterministic_gaussian_sampling.type_wrapper.python_variant as python_variant
         return python_variant.GslMinimizerResultPy(
-            float(self.initalStepSize), # initialStepSize
-            float(self.stepTolerance),  # stepTolerance
-            float(self.lastXtolAbs),    # lastXtolAbs
-            float(self.lastXtolRel),    # lastFtolRel
-            float(self.lastFtolAbs),    # lastFtolAbs
-            float(self.lastFtolRel),    # lastFtolRel
-            float(self.lastGtol),       # lastGtol
-            float(self.xtolAbs),        # xtolAbs
-            float(self.xtolRel),        # xtolRel
-            float(self.ftolAbs),        # ftolAbs
-            float(self.ftolRel),        # ftolRel
-            float(self.gtol),           # gtol
-            int(self.iterations),       # iterations
-            int(self.maxIterations),    # maxIterations
-            int(self.elapsedTimeMicro)  # elapsedTimeMicro
+            float(self.initalStepSize),
+            float(self.stepTolerance),
+            float(self.lastXtolAbs),
+            float(self.lastXtolRel),
+            float(self.lastFtolAbs),
+            float(self.lastFtolRel),
+            float(self.lastGtol),
+            float(self.xtolAbs),
+            float(self.xtolRel),
+            float(self.ftolAbs),
+            float(self.ftolRel),
+            float(self.gtol),
+            int(self.iterations),
+            int(self.maxIterations),
+            int(self.elapsedTimeMicro),
         )
+
 
 class ApproximateOptionsCTypes(ctypes.Structure):
     _fields_ = [
-        ("xtolAbs", ctypes.c_double),       # xtolAbs
-        ("xtolRel", ctypes.c_double),       # xtolRel
-        ("ftolAbs", ctypes.c_double),       # ftolAbs
-        ("ftolRel", ctypes.c_double),       # ftolRel
-        ("gtol", ctypes.c_double),          # gtol
-        ("initialX", ctypes.c_bool),        # intialX
-        ("maxIterations", ctypes.c_size_t), # maxIterations
-        ("verbose", ctypes.c_bool),         # verbose
+        ("xtolAbs", ctypes.c_double),
+        ("xtolRel", ctypes.c_double),
+        ("ftolAbs", ctypes.c_double),
+        ("ftolRel", ctypes.c_double),
+        ("gtol", ctypes.c_double),
+        ("initialX", ctypes.c_bool),
+        ("maxIterations", ctypes.c_size_t),
+        ("verbose", ctypes.c_bool),
     ]
 
     @staticmethod
-    def from_py_type(pyT: python_variant.ApproximateOptionsPy) -> ApproximateOptionsCTypes:
+    def from_py_type(pyT: "deterministic_gaussian_sampling.type_wrapper.python_variant.ApproximateOptionsPy") -> "ApproximateOptionsCTypes":
+        # local import
+        import deterministic_gaussian_sampling.type_wrapper.python_variant as python_variant  # noqa: F401
         return ApproximateOptionsCTypes(
-            ctypes.c_double(pyT.xtolAbs),       # xtolAbs
-            ctypes.c_double(pyT.xtolRel),       # xtolRel
-            ctypes.c_double(pyT.ftolAbs),       # ftolAbs
-            ctypes.c_double(pyT.ftolRel),       # ftolRel
-            ctypes.c_double(pyT.gtol),          # gtol
-            ctypes.c_bool(pyT.initialX),        # intialX
-            ctypes.c_size_t(pyT.maxIterations), # maxIteration
-            ctypes.c_bool(pyT.verbose)          # verbose
-        )
-    
-    def to_py_type(self) -> python_variant.ApproximateOptionsPy:
-        return python_variant.ApproximateOptionsPy(
-            float(self.xtolAbs),        # xtolAbs
-            float(self.xtolRel),        # xtolRel
-            float(self.ftolAbs),        # ftolAbs
-            float(self.ftolRel),        # ftolRel
-            float(self.gtol),           # gtol
-            bool(self.initialX),        # intialX
-            int(self.maxIterations),    # maxIteration
-            bool(self.verbose)          # verbose
+            ctypes.c_double(pyT.xtolAbs),
+            ctypes.c_double(pyT.xtolRel),
+            ctypes.c_double(pyT.ftolAbs),
+            ctypes.c_double(pyT.ftolRel),
+            ctypes.c_double(pyT.gtol),
+            ctypes.c_bool(pyT.initialX),
+            ctypes.c_size_t(pyT.maxIterations),
+            ctypes.c_bool(pyT.verbose),
         )
 
+    def to_py_type(self):
+        import deterministic_gaussian_sampling.type_wrapper.python_variant as python_variant
+        return python_variant.ApproximateOptionsPy(
+            float(self.xtolAbs),
+            float(self.xtolRel),
+            float(self.ftolAbs),
+            float(self.ftolRel),
+            float(self.gtol),
+            bool(self.initialX),
+            int(self.maxIterations),
+            bool(self.verbose),
+        )
+
+
 wXCallbackCTypes = ctypes.CFUNCTYPE(
-    None,                               # return
-    ctypes.POINTER(ctypes.c_double),    # x
-    ctypes.POINTER(ctypes.c_double),    # res
-    ctypes.c_size_t,                    # L
-    ctypes.c_size_t                     # N
+    None,
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.c_size_t,
+    ctypes.c_size_t,
 )
 wXDCallbackCTypes = wXCallbackCTypes

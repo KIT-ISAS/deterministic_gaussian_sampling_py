@@ -10,12 +10,12 @@ jobs:
       - name: download release asset from deterministicGaussianSampling
         uses: robinraju/release-downloader@v1
         with:
-          repository: 'KIT-ISAS/deterministicGaussianSampling'
+          repository: "KIT-ISAS/deterministicGaussianSampling"
           latest: true
-          fileName: '*.zip'
-          out-file-path: 'deterministicGaussianSamplingLibs'
+          fileName: "*.zip"
+          out-file-path: "deterministicGaussianSamplingLibs"
           token: ${{ secrets.GITHUB_TOKEN }}
-    
+
       - name: upload downloaded libs as artifact
         uses: actions/upload-artifact@v4
         with:
@@ -48,23 +48,23 @@ jobs:
       - name: extract ZIP on Unix
         if: ${{ runner.os == 'Linux' }}
         run: |
-            mkdir -p external_libs_unpacked/linux
-            unzip external_libs/linux.zip -d external_libs_unpacked/linux
-            mkdir -p src/deterministic_gaussian_sampling/lib/linux/bin
-            cp -r external_libs_unpacked/linux/lib/* src/deterministic_gaussian_sampling/lib/linux/bin
+          mkdir -p external_libs_unpacked/linux
+          unzip external_libs/linux.zip -d external_libs_unpacked/linux
+          mkdir -p src/deterministic_gaussian_sampling/lib/linux/bin
+          cp -r external_libs_unpacked/linux/lib/* src/deterministic_gaussian_sampling/lib/linux/bin
 
       - name: extract ZIP on Windows
         if: ${{ runner.os == 'Windows' }}
         shell: pwsh
         run: |
-            New-Item -ItemType Directory -Path external_libs_unpacked\windows -Force
-            Expand-Archive -Path external_libs/windows.zip -DestinationPath external_libs_unpacked\windows -Force
-            New-Item -ItemType Directory -Path src\deterministic_gaussian_sampling\lib\windows\bin -Force
-            Copy-Item external_libs_unpacked\windows\bin\* src\deterministic_gaussian_sampling\lib\windows\bin -Recurse -Force
+          New-Item -ItemType Directory -Path external_libs_unpacked\windows -Force
+          Expand-Archive -Path external_libs/windows.zip -DestinationPath external_libs_unpacked\windows -Force
+          New-Item -ItemType Directory -Path src\deterministic_gaussian_sampling\lib\windows\bin -Force
+          Copy-Item external_libs_unpacked\windows\bin\* src\deterministic_gaussian_sampling\lib\windows\bin -Recurse -Force
 
       - name: run tests
         run: |
-            pip install -e .
-            pip install --upgrade pip
-            pip install pytest
-            pytest -v
+          pip install -e .
+          pip install --upgrade pip
+          pip install pytest scipy
+          pytest -v

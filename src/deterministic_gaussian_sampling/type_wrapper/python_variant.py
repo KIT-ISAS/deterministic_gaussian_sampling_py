@@ -1,28 +1,29 @@
+# python_variant.py
+from __future__ import annotations
 from dataclasses import dataclass
 import ctypes
-import numpy
-import deterministic_gaussian_sampling.type_wrapper.python_variant as python_variant
-import deterministic_gaussian_sampling.type_wrapper.ctypes_wrapper as ctypes_wrapper
-
+import numpy as np
 
 @dataclass
 class ApproximationResultPy:
     success: bool
-    result: python_variant.GslMinimizerResultPy
-    x: numpy.ndarray
+    result: "GslMinimizerResultPy"
+    x: np.ndarray
 
     @staticmethod
     def from_ctypes(
         success: ctypes.c_bool,
-        minimizer_result: ctypes_wrapper.GslMinimizerResultCTypes,
+        minimizer_result,
         x_ptr: ctypes.POINTER[ctypes.c_double],
         L: int,
         N: int,
     ) -> "ApproximationResultPy":
+        from deterministic_gaussian_sampling.type_wrapper import ctypes_wrapper
+
         return ApproximationResultPy(
             bool(success),
             minimizer_result.to_py_type(),
-            numpy.ctypeslib.as_array(x_ptr, shape=(L, N)),
+            np.ctypeslib.as_array(x_ptr, shape=(L, N)),
         )
 
     def __str__(self):
@@ -37,55 +38,21 @@ class ApproximationResultPy:
 
 @dataclass
 class GslMinimizerResultPy:
-    initalStepSize: float
-    stepTolerance: float
-    lastXtolAbs: float
-    lastXtolRel: float
-    lastFtolAbs: float
-    lastFtolRel: float
-    lastGtol: float
-    xtolAbs: float
-    xtolRel: float
-    ftolAbs: float
-    ftolRel: float
-    gtol: float
-    iterations: int
-    maxIterations: int
-    elapsedTimeMicro: int
-
-    def __init__(
-        self,
-        initalStepSize=0.0,
-        stepTolerance=0.0,
-        lastXtolAbs=0.0,
-        lastXtolRel=0.0,
-        lastFtolAbs=0.0,
-        lastFtolRel=0.0,
-        lastGtol=0.0,
-        xtolAbs=0.0,
-        xtolRel=0.0,
-        ftolAbs=0.0,
-        ftolRel=0.0,
-        gtol=0.0,
-        iterations=0,
-        maxIterations=0,
-        elapsedTimeMicro=0,
-    ):
-        self.initalStepSize = initalStepSize
-        self.stepTolerance = stepTolerance
-        self.lastXtolAbs = lastXtolAbs
-        self.lastXtolRel = lastXtolRel
-        self.lastFtolAbs = lastFtolAbs
-        self.lastFtolRel = lastFtolRel
-        self.lastGtol = lastGtol
-        self.xtolAbs = xtolAbs
-        self.xtolRel = xtolRel
-        self.ftolAbs = ftolAbs
-        self.ftolRel = ftolRel
-        self.gtol = gtol
-        self.iterations = iterations
-        self.maxIterations = maxIterations
-        self.elapsedTimeMicro = elapsedTimeMicro
+    initalStepSize: float = 0.0
+    stepTolerance: float = 0.0
+    lastXtolAbs: float = 0.0
+    lastXtolRel: float = 0.0
+    lastFtolAbs: float = 0.0
+    lastFtolRel: float = 0.0
+    lastGtol: float = 0.0
+    xtolAbs: float = 0.0
+    xtolRel: float = 0.0
+    ftolAbs: float = 0.0
+    ftolRel: float = 0.0
+    gtol: float = 0.0
+    iterations: int = 0
+    maxIterations: int = 0
+    elapsedTimeMicro: int = 0
 
     @staticmethod
     def _format_elapsed_time(elapsedMicro):
