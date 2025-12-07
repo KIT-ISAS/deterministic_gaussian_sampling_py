@@ -2,6 +2,7 @@ import deterministic_gaussian_sampling.type_wrapper.ctypes_wrapper as ctypes_wra
 import deterministic_gaussian_sampling.type_wrapper.python_variant as python_variant
 import ctypes
 import numpy
+from typing import Optional
 from .base_approximation import BaseApproximation
 
 
@@ -30,8 +31,8 @@ class GaussianToDiracApproximation(BaseApproximation):
         L: int,
         N: int,
         x: numpy.ndarray,
-        wX: numpy.ndarray | None = None,
-        options: python_variant.ApproximateOptionsPy | None = None,
+        wX: Optional[numpy.ndarray] = None,
+        options: Optional[python_variant.ApproximateOptionsPy] = None,
     ) -> python_variant.ApproximationResultPy:
         cdll = self.__class__.cdll
         if cdll is None:
@@ -61,8 +62,8 @@ class GaussianToDiracApproximation(BaseApproximation):
         L: int,
         N: int,
         x: numpy.ndarray,
-        wX: numpy.ndarray | None = None,
-        options: python_variant.ApproximateOptionsPy | None = None,
+        wX: Optional[numpy.ndarray] = None,
+        options: Optional[python_variant.ApproximateOptionsPy] = None,
     ) -> python_variant.ApproximationResultPy:
         cdll = self.__class__.cdll
         if cdll is None:

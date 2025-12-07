@@ -1,5 +1,6 @@
 import ctypes
 import numpy
+from typing import Optional
 import deterministic_gaussian_sampling.type_wrapper.python_variant as python_variant
 import deterministic_gaussian_sampling.type_wrapper.ctypes_wrapper as ctypes_wrapper
 from .base_approximation import BaseApproximation
@@ -30,9 +31,9 @@ class DiracToDiracApproximation(BaseApproximation):
         L: int,
         N: int,
         x: numpy.ndarray,
-        wX: numpy.ndarray | None = None,
-        wY: numpy.ndarray | None = None,
-        options: python_variant.ApproximateOptionsPy | None = None,
+        wX: Optional[numpy.ndarray] = None,
+        wY: Optional[numpy.ndarray] = None,
+        options: Optional[python_variant.ApproximateOptionsPy] = None,
     ) -> python_variant.ApproximationResultPy:
         cdll = self.__class__.cdll
         if cdll is None:
@@ -68,9 +69,9 @@ class DiracToDiracApproximation(BaseApproximation):
         L: int,
         N: int,
         x: numpy.ndarray,
-        wX: numpy.ndarray | None = None,
-        wY: numpy.ndarray | None = None,
-        options: python_variant.ApproximateOptionsPy | None = None,
+        wX: Optional[numpy.ndarray] = None,
+        wY: Optional[numpy.ndarray] = None,
+        options: Optional[python_variant.ApproximateOptionsPy] = None,
     ) -> python_variant.ApproximationResultPy:
         cdll = self.__class__.cdll
         if cdll is None:
@@ -106,9 +107,9 @@ class DiracToDiracApproximation(BaseApproximation):
         L: int,
         N: int,
         x: numpy.ndarray,
-        wX: numpy.ndarray | None = None,
-        wY: numpy.ndarray | None = None,
-        options: python_variant.ApproximateOptionsPy | None = None,
+        wX: Optional[numpy.ndarray] = None,
+        wY: Optional[numpy.ndarray] = None,
+        options: Optional[python_variant.ApproximateOptionsPy] = None,
     ) -> python_variant.ApproximationResultPy:
         cdll = self.__class__.cdll
         if cdll is None:

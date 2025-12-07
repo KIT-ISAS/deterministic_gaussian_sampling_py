@@ -22,7 +22,7 @@ class BaseApproximation:
             raise TypeError("Unsupported ctype for mapping to numpy dtype")
 
     def _check_numpy_ndarray(
-        self, arr: numpy.ndarray | None, L: int, N: int
+        self, arr: Optional[numpy.ndarray], L: int, N: int
     ) -> ctypes.Array:
         if arr is None:
             return None
