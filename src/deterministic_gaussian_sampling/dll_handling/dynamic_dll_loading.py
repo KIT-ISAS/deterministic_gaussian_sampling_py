@@ -127,4 +127,4 @@ def load_dll() -> ctypes.CDLL:
     
     dll_path = package_root / dll_rel
 
-    return _setup_ctypes_dll(ctypes.CDLL(dll_path))
+    return _setup_ctypes_dll(ctypes.CDLL(str(dll_path)))
