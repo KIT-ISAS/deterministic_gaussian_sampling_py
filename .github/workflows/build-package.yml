@@ -26,7 +26,13 @@ jobs:
     needs: download_releases
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest] #, macos-latest]
+        os: [
+            windows-2025,
+            windows-2022,
+            windows-2019,
+            ubuntu-24.04,
+            ubuntu-22.04,
+          ] #, macos-14, macos-14-large, macos-15, macos-26]
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
     runs-on: ${{ matrix.os }}
 
