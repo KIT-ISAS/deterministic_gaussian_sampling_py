@@ -7,7 +7,7 @@ name = "deterministic_gaussian_sampling"
 version = "0.1.0"
 description = "Python library for Localized Distribution (LCD)-based Gaussian sampling."
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 authors = [
   { name="Aaron Preus", email="udxct@student.kit.edu" }
 ]
