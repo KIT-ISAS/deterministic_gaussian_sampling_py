@@ -27,7 +27,8 @@ class GaussianToDiracApproximation(BaseApproximation):
         )
 
     def approximate_double(
-        self,        covDiag: numpy.ndarray,
+        self,
+        covDiag: numpy.ndarray,
         L: int,
         N: int,
         x: numpy.ndarray,
@@ -40,7 +41,7 @@ class GaussianToDiracApproximation(BaseApproximation):
         minimizer_result = ctypes_wrapper.GslMinimizerResultCTypes()
         success = cdll.gm_to_dirac_short_double_approximate(
             self.gm_to_dirac_double,
-            covDiag,
+            self._check_numpy_ndarray(covDiag, covDiag.shape[0], covDiag.shape[0]),
             ctypes.c_int(L),
             ctypes.c_int(N),
             ctypes.c_int(100),
