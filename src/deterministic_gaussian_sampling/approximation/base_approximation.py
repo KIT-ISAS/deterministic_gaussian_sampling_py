@@ -28,16 +28,9 @@ class BaseApproximation:
             return None
         if not isinstance(arr, numpy.ndarray):
             raise TypeError("Input must be a numpy array")
-        if (
-            arr.dtype != float
-            and arr.dtype != numpy.float16
-            and arr.dtype != numpy.float32
-            and arr.dtype != numpy.float64
-            and arr.dtype != numpy.float96
-            and arr.dtype != numpy.float128
-        ):
+        if not numpy.issubdtype(arr.dtype, numpy.floating) and arr.dtype != float:
             raise TypeError(
-                f"Input array must be of [float, numpy.float16, numpy.float32, numpy.float64, numpy.float96, numpy.float128], but got {arr.dtype}."
+                f"Input array must be of a floating type, but got {arr.dtype}."
             )
         if arr.shape != (L, N):
             row, cols = arr.shape

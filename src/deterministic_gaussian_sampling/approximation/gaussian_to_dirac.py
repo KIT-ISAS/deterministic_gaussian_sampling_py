@@ -42,9 +42,9 @@ class GaussianToDiracApproximation(BaseApproximation):
         success = cdll.gm_to_dirac_short_double_approximate(
             self.gm_to_dirac_double,
             self._check_numpy_ndarray(covDiag, covDiag.shape[0], covDiag.shape[0]),
-            ctypes.c_int(L),
-            ctypes.c_int(N),
-            ctypes.c_int(100),
+            ctypes.c_size_t(L),
+            ctypes.c_size_t(N),
+            ctypes.c_size_t(100),
             self._check_numpy_ndarray(x, L, N),
             self._check_numpy_ndarray(wX, L, 1),
             ctypes.byref(minimizer_result),
@@ -72,9 +72,9 @@ class GaussianToDiracApproximation(BaseApproximation):
         minimizer_result = ctypes_wrapper.GslMinimizerResultCTypes()
         success = cdll.gm_to_dirac_short_standard_normal_deviation_double_approximate(
             self.gm_to_dirac_snd_double,
-            ctypes.c_int(L),
-            ctypes.c_int(N),
-            ctypes.c_int(100),
+            ctypes.c_size_t(L),
+            ctypes.c_size_t(N),
+            ctypes.c_size_t(100),
             self._check_numpy_ndarray(x, L, N),
             self._check_numpy_ndarray(wX, L, 1),
             ctypes.byref(minimizer_result),
