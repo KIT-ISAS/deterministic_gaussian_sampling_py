@@ -98,23 +98,22 @@ jobs:
           name: deterministicGaussianSampling-libs
           path: external_libs
 
-      - name: Extract shared libraries (Linux)
-        if: runner.os == 'Linux'
+      - name: extract ZIP on Unix
+        if: ${{ runner.os == 'Linux' }}
         run: |
-          unzip external_libs/linux.zip -d external_libs_unpacked
+          mkdir -p external_libs_unpacked/linux
+          unzip external_libs/linux.zip -d external_libs_unpacked/linux
           mkdir -p src/deterministic_gaussian_sampling/lib/linux/bin
-          cp -r external_libs_unpacked/lib/* \
-                src/deterministic_gaussian_sampling/lib/linux/bin/
+          cp -r external_libs_unpacked/linux/lib/* src/deterministic_gaussian_sampling/lib/linux/bin
 
-      - name: Extract shared libraries (Windows)
-        if: runner.os == 'Windows'
+      - name: extract ZIP on Windows
+        if: ${{ runner.os == 'Windows' }}
         shell: pwsh
         run: |
-          Expand-Archive external_libs/windows.zip external_libs_unpacked -Force
-          New-Item -ItemType Directory `
-            -Path src\deterministic_gaussian_sampling\lib\windows\bin -Force
-          Copy-Item external_libs_unpacked\bin\* `
-            src\deterministic_gaussian_sampling\lib\windows\bin -Recurse -Force
+          New-Item -ItemType Directory -Path external_libs_unpacked\windows -Force
+          Expand-Archive -Path external_libs/windows.zip -DestinationPath external_libs_unpacked\windows -Force
+          New-Item -ItemType Directory -Path src\deterministic_gaussian_sampling\lib\windows\bin -Force
+          Copy-Item external_libs_unpacked\windows\bin\* src\deterministic_gaussian_sampling\lib\windows\bin -Recurse -Force
 
       - name: Install cibuildwheel
         run: pip install cibuildwheel
