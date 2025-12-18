@@ -120,7 +120,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@isas-packages@iar.kit.edu"
 
-          git add src/deterministic_gaussian_sampling/lib
+          git add -f src/deterministic_gaussian_sampling/lib
 
           if git diff --cached --quiet; then
             echo "No changes to commit"
