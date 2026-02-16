@@ -26,8 +26,7 @@ class GslMinimizerResultCTypes(ctypes.Structure):
 
     @staticmethod
     def from_py_type(pyT: "deterministic_gaussian_sampling.type_wrapper.python_variant.GslMinimizerResultPy") -> "GslMinimizerResultCTypes":
-        # local import to avoid circular import at module import time
-        import deterministic_gaussian_sampling.type_wrapper.python_variant as python_variant  # noqa: F401
+        import deterministic_gaussian_sampling.type_wrapper.python_variant as python_variant
         return GslMinimizerResultCTypes(
             ctypes.c_double(pyT.initalStepSize),
             ctypes.c_double(pyT.stepTolerance),
@@ -47,7 +46,6 @@ class GslMinimizerResultCTypes(ctypes.Structure):
         )
 
     def to_py_type(self):
-        # local import to avoid circular import at module import time
         import deterministic_gaussian_sampling.type_wrapper.python_variant as python_variant
         return python_variant.GslMinimizerResultPy(
             float(self.initalStepSize),
@@ -82,8 +80,7 @@ class ApproximateOptionsCTypes(ctypes.Structure):
 
     @staticmethod
     def from_py_type(pyT: "deterministic_gaussian_sampling.type_wrapper.python_variant.ApproximateOptionsPy") -> "ApproximateOptionsCTypes":
-        # local import
-        import deterministic_gaussian_sampling.type_wrapper.python_variant as python_variant  # noqa: F401
+        import deterministic_gaussian_sampling.type_wrapper.python_variant as python_variant
         return ApproximateOptionsCTypes(
             ctypes.c_double(pyT.xtolAbs),
             ctypes.c_double(pyT.xtolRel),

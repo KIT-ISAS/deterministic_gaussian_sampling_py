@@ -38,17 +38,21 @@ class DiracToDiracApproximation(BaseApproximation):
         cdll = self.__class__.cdll
         if cdll is None:
             raise OSError("C++-Library was not loaded. Unable to continue!!!")
+        yChecked = self._check_numpy_ndarray(y, M, N)
+        xChecked = self._check_numpy_ndarray(x, L, N)
+        wXChecked = self._check_weights(wX, L)
+        wYChecked = self._check_weights(wY, M)
         minimizer_result = ctypes_wrapper.GslMinimizerResultCTypes()
         success: ctypes.c_bool = cdll.dirac_to_dirac_approx_short_double_approximate(
             self.d2d_short_double,
-            self._check_numpy_ndarray(y, M, N),
+            yChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
             ctypes.c_size_t(100),
-            self._check_numpy_ndarray(x, L, N),
-            self._check_numpy_ndarray(wX, L, 1),
-            self._check_numpy_ndarray(wY, M, 1),
+            xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            None if wYChecked is None else wYChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             ctypes.byref(minimizer_result),
             (
                 None
@@ -69,24 +73,28 @@ class DiracToDiracApproximation(BaseApproximation):
         L: int,
         N: int,
         x: numpy.ndarray,
-        wX: Optional[numpy.ndarray] = None,
-        wY: Optional[numpy.ndarray] = None,
+        wX: python_variant.wXCallbackPythonType,
+        wXD: python_variant.wXDCallbackPythonType,
         options: Optional[python_variant.ApproximateOptionsPy] = None,
     ) -> python_variant.ApproximationResultPy:
         cdll = self.__class__.cdll
         if cdll is None:
             raise OSError("C++-Library was not loaded. Unable to continue!!!")
+        yChecked = self._check_numpy_ndarray(y, M, N)
+        xChecked = self._check_numpy_ndarray(x, L, N)
         minimizer_result = ctypes_wrapper.GslMinimizerResultCTypes()
+        wX = python_variant.wx_callback_python_wrapper(wX)
+        wXD = python_variant.wxd_callback_python_wrapper(wXD)
         success = cdll.dirac_to_dirac_approx_short_function_double_approximate(
             self.d2d_func_double,
-            self._check_numpy_ndarray(y, M, N),
+            yChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
             ctypes.c_size_t(100),
-            self._check_numpy_ndarray(x, L, N),
-            wX,  # TODO: replace with function wrapper
-            wY,  # TODO: replace with function wrapper
+            xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            wX,
+            wXD,
             ctypes.byref(minimizer_result),
             (
                 None
@@ -114,17 +122,21 @@ class DiracToDiracApproximation(BaseApproximation):
         cdll = self.__class__.cdll
         if cdll is None:
             raise OSError("C++-Library was not loaded. Unable to continue!!!")
+        yChecked = self._check_numpy_ndarray(y, M, N)
+        xChecked = self._check_numpy_ndarray(x, L, N)
+        wXChecked = self._check_weights(wX, L)
+        wYChecked = self._check_weights(wY, M)
         minimizer_result = ctypes_wrapper.GslMinimizerResultCTypes()
         success = cdll.dirac_to_dirac_approx_short_thread_double_approximate(
             self.d2d_thread_double,
-            self._check_numpy_ndarray(y, M, N),
+            yChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
             ctypes.c_size_t(100),
-            self._check_numpy_ndarray(x, L, N),
-            self._check_numpy_ndarray(wX, L, 1),
-            self._check_numpy_ndarray(wY, M, 1),
+            xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            None if wYChecked is None else wYChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             ctypes.byref(minimizer_result),
             (
                 None
