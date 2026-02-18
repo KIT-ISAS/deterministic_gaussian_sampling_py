@@ -2,7 +2,14 @@ name: Build package to PyPi
 
 on:
   push:
-
+    branches:
+      - main
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - main
+      
 jobs:
   download_releases:
     runs-on: ubuntu-latest
