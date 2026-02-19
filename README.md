@@ -5,6 +5,9 @@ Deterministic approximation and reduction of multivariate **Dirac mixtures** and
 The computational core is written in C++ for high performance.  
 The Python package provides a NumPy-friendly API and ships with **precompiled binaries**.
 
+📖 **Full API Documentation:**  
+https://kit-isas.github.io/deterministic_gaussian_sampling_py/
+
 ---
 
 ## Installation
