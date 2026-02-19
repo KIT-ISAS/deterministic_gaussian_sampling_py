@@ -6,6 +6,12 @@ import deterministic_gaussian_sampling.type_wrapper.ctypes_wrapper as ctypes_wra
 from .base_approximation import BaseApproximation
 
 class _ApproximateDouble:
+    """
+    Single-threaded Dirac-to-Dirac reduction (double precision).
+
+    Callable interface for reducing an M-point Dirac mixture
+    to L optimized Dirac points in N dimensions.
+    """
     def __init__(self, parent):
         self._parent = parent
 
@@ -20,6 +26,35 @@ class _ApproximateDouble:
         wY: Optional[numpy.ndarray] = None,
         options: Optional[python_variant.ApproximateOptionsPy] = None,
     ) -> python_variant.ApproximationResultPy:
+        """
+        Perform Dirac-to-Dirac reduction.
+
+        Parameters
+        ----------
+        y : numpy.ndarray
+            Input Dirac locations (shape: M x N).
+        M : int
+            Number of input components.
+        L : int
+            Number of reduced components.
+        N : int
+            Dimension.
+        x : numpy.ndarray
+            Initial guess (L x N). Overwritten with result.
+        wX : numpy.ndarray, optional
+            Weights of reduced mixture (size L).
+        wY : numpy.ndarray, optional
+            Weights of input mixture (size M).
+        options : ApproximateOptionsPy, optional
+            Optimization parameters.
+
+        Returns
+        -------
+        ApproximationResultPy
+            Result object containing success flag,
+            minimizer information and optimized points.
+        """
+
         cdll = self._parent.cdll
         if cdll is None:
             raise OSError("C++-Library was not loaded. Unable to continue!!!")
@@ -61,6 +96,21 @@ class _ApproximateDouble:
         wX: Optional[numpy.ndarray] = None,
         wY: Optional[numpy.ndarray] = None
     ) -> float:
+        """
+        Compute squared modified van Mises distance.
+
+        Parameters
+        ----------
+        y : numpy.ndarray
+            Input Dirac locations (M x N).
+        x : numpy.ndarray
+            Reduced Dirac locations (L x N).
+
+        Returns
+        -------
+        float
+            Squared distance value.
+        """
         cdll = self._parent.cdll
         if cdll is None:
             raise OSError("C++-Library was not loaded. Unable to continue!!!")
@@ -93,6 +143,21 @@ class _ApproximateDouble:
         wX: Optional[numpy.ndarray] = None,
         wY: Optional[numpy.ndarray] = None
     ) -> numpy.ndarray:
+        """
+        Compute analytical gradient of squared distance.
+
+        Parameters
+        ----------
+        y : numpy.ndarray
+            Input Dirac locations (M x N).
+        x : numpy.ndarray
+            Reduced Dirac locations (L x N).
+
+        Returns
+        -------
+        numpy.ndarray
+            Gradient array of shape (L x N).
+        """
         cdll = self._parent.cdll
         if cdll is None:
             raise OSError("C++-Library was not loaded. Unable to continue!!!")
@@ -117,6 +182,12 @@ class _ApproximateDouble:
         return gradient
 
 class _ApproximateFunctionDouble:
+    """
+    Dirac-to-Dirac reduction with user-defined weight functions.
+
+    The reduced mixture weights are computed using
+    Python callback functions.
+    """
     def __init__(self, parent):
         self._parent = parent
 
@@ -131,6 +202,21 @@ class _ApproximateFunctionDouble:
         wXD: python_variant.wXDCallbackPythonType,
         options: Optional[python_variant.ApproximateOptionsPy] = None,
     ) -> python_variant.ApproximationResultPy:
+        """
+        Perform reduction using custom weight functions.
+
+        Parameters
+        ----------
+        wX : callable
+            Weight function callback.
+        wXD : callable
+            Derivative of weight function.
+
+        Returns
+        -------
+        ApproximationResultPy
+            Optimization result.
+        """
         cdll = self._parent.cdll
         if cdll is None:
             raise OSError("C++-Library was not loaded. Unable to continue!!!")
@@ -172,6 +258,21 @@ class _ApproximateFunctionDouble:
         wX: python_variant.wXCallbackPythonType,
         wXD: python_variant.wXDCallbackPythonType
     ) -> float:
+        """
+        Compute squared modified van Mises distance.
+
+        Parameters
+        ----------
+        y : numpy.ndarray
+            Input Dirac locations (M x N).
+        x : numpy.ndarray
+            Reduced Dirac locations (L x N).
+
+        Returns
+        -------
+        float
+            Squared distance value.
+        """
         cdll = self._parent.cdll
         if cdll is None:
             raise OSError("C++-Library was not loaded. Unable to continue!!!")
@@ -202,6 +303,21 @@ class _ApproximateFunctionDouble:
         wX: python_variant.wXCallbackPythonType,
         wXD: python_variant.wXDCallbackPythonType
     ) -> numpy.ndarray:
+        """
+        Compute analytical gradient of squared distance.
+
+        Parameters
+        ----------
+        y : numpy.ndarray
+            Input Dirac locations (M x N).
+        x : numpy.ndarray
+            Reduced Dirac locations (L x N).
+
+        Returns
+        -------
+        numpy.ndarray
+            Gradient array of shape (L x N).
+        """
         cdll = self._parent.cdll
         if cdll is None:
             raise OSError("C++-Library was not loaded. Unable to continue!!!")
@@ -224,6 +340,12 @@ class _ApproximateFunctionDouble:
         return gradient
 
 class _ApproximateThreadDouble:
+    """
+    Multi-threaded Dirac-to-Dirac reduction (double precision).
+
+    Same functionality as the single-threaded version,
+    but internally parallelized.
+    """
     def __init__(self, parent):
         self._parent = parent
 
@@ -238,6 +360,34 @@ class _ApproximateThreadDouble:
         wY: Optional[numpy.ndarray] = None,
         options: Optional[python_variant.ApproximateOptionsPy] = None,
     ) -> python_variant.ApproximationResultPy:
+        """
+        Perform Dirac-to-Dirac reduction.
+
+        Parameters
+        ----------
+        y : numpy.ndarray
+            Input Dirac locations (shape: M x N).
+        M : int
+            Number of input components.
+        L : int
+            Number of reduced components.
+        N : int
+            Dimension.
+        x : numpy.ndarray
+            Initial guess (L x N). Overwritten with result.
+        wX : numpy.ndarray, optional
+            Weights of reduced mixture (size L).
+        wY : numpy.ndarray, optional
+            Weights of input mixture (size M).
+        options : ApproximateOptionsPy, optional
+            Optimization parameters.
+
+        Returns
+        -------
+        ApproximationResultPy
+            Result object containing success flag,
+            minimizer information and optimized points.
+        """
         cdll = self._parent.cdll
         if cdll is None:
             raise OSError("C++-Library was not loaded. Unable to continue!!!")
@@ -279,6 +429,21 @@ class _ApproximateThreadDouble:
         wX: Optional[numpy.ndarray] = None,
         wY: Optional[numpy.ndarray] = None
     ) -> float:
+        """
+        Compute squared modified van Mises distance.
+
+        Parameters
+        ----------
+        y : numpy.ndarray
+            Input Dirac locations (M x N).
+        x : numpy.ndarray
+            Reduced Dirac locations (L x N).
+
+        Returns
+        -------
+        float
+            Squared distance value.
+        """
         cdll = self._parent.cdll
         if cdll is None:
             raise OSError("C++-Library was not loaded. Unable to continue!!!")
@@ -311,6 +476,21 @@ class _ApproximateThreadDouble:
         wX: Optional[numpy.ndarray] = None,
         wY: Optional[numpy.ndarray] = None
     ) -> numpy.ndarray:
+        """
+        Compute analytical gradient of squared distance.
+
+        Parameters
+        ----------
+        y : numpy.ndarray
+            Input Dirac locations (M x N).
+        x : numpy.ndarray
+            Reduced Dirac locations (L x N).
+
+        Returns
+        -------
+        numpy.ndarray
+            Gradient array of shape (L x N).
+        """
         cdll = self._parent.cdll
         if cdll is None:
             raise OSError("C++-Library was not loaded. Unable to continue!!!")
@@ -335,6 +515,21 @@ class _ApproximateThreadDouble:
         return gradient
 
 class DiracToDiracApproximation(BaseApproximation):
+    """
+    Dirac-to-Dirac reduction interface.
+
+    Python wrapper around the C++ Dirac mixture reduction backend.
+
+    This class provides:
+
+    - Single-threaded reduction
+    - Multi-threaded reduction
+    - Reduction with user-defined weight functions
+    - Distance evaluation
+    - Analytical gradient computation
+
+    All heavy computations are performed in the C++ core library.
+    """
     def __init__(self):
         super().__init__()
         cdll = self.__class__.cdll

@@ -1,0 +1,293 @@
+/**
+ * \mainpage Deterministic Gaussian Sampling – Python API
+ *
+ * \section overview Overview
+ *
+ * The Python API provides high-level access to the optimized
+ * C++ backend for deterministic Gaussian sampling.
+ *
+ * The package supports:
+ *
+ * - Dirac-to-Dirac reduction
+ * - Gaussian-to-Dirac approximation
+ * - Distance evaluation
+ * - Analytical gradient computation
+ *
+ * All computationally expensive operations are executed in C++.
+ * The Python layer provides:
+ *
+ * - NumPy integration
+ * - Automatic input validation
+ * - Optional weight handling
+ * - Simple object-oriented interface
+ *
+ * \section classes Main Classes
+ *
+ * - \ref page_py_d2d
+ * - \ref page_py_gm
+ *
+ */
+
+
+
+/**
+ * \page page_py_d2d DiracToDiracApproximation
+ *
+ * Python interface for deterministic Dirac mixture reduction.
+ *
+ * This class reduces a set of M discrete Dirac components
+ * in ℝᴺ to L optimized deterministic Dirac components.
+ *
+ * The reduction preserves the global structure of the input
+ * mixture while minimizing a distance metric computed in
+ * the C++ backend.
+ *
+ * \section variants Available Variants
+ *
+ * - \ref page_py_d2d_short (single-threaded)
+ * - \ref page_py_d2d_thread (multi-threaded)
+ * - \ref page_py_d2d_function (custom weight functions)
+ *
+ * \section notes Notes
+ *
+ * - Input arrays must be NumPy arrays (float64).
+ * - Shapes must match (M x N) and (L x N).
+ * - The output array is modified in-place.
+ *
+ */
+
+
+
+/**
+ * \page page_py_d2d_short approximate_double
+ *
+ * Single-threaded Dirac-to-Dirac reduction.
+ *
+ * This implementation performs the complete optimization
+ * in a single thread.
+ *
+ * Recommended for:
+ *
+ * - Small to medium problem sizes
+ * - Debugging
+ * - Deterministic performance benchmarking
+ *
+ * \section parameters Parameters
+ *
+ * - y: Input Dirac locations (M x N)
+ * - M: Number of input components
+ * - L: Number of reduced components
+ * - N: Dimension
+ * - x: Output buffer (L x N)
+ * - wX: Optional reduced weights
+ * - wY: Optional input weights
+ *
+ * \section example Example
+ *
+ * \code{.py}
+ * d2d = dgs.DiracToDiracApproximation()
+ * result = d2d.approximate_double(y, M, L, N, x)
+ *
+ * if result.result:
+ *     print("Optimization successful")
+ *     print(result.x)
+ * \endcode
+ *
+ */
+
+
+
+/**
+ * \page page_py_d2d_thread approximate_thread_double
+ *
+ * Multi-threaded Dirac-to-Dirac reduction.
+ *
+ * This variant performs the same computation as
+ * \ref page_py_d2d_short but uses parallel execution
+ * in the C++ backend.
+ *
+ * Recommended for:
+ *
+ * - Large M
+ * - Large L
+ * - High-dimensional problems
+ *
+ * Produces identical numerical results
+ * to the single-threaded variant.
+ *
+ * \section example Example
+ *
+ * \code{.py}
+ * result = d2d.approximate_thread_double(y, M, L, N, x)
+ * \endcode
+ *
+ */
+
+
+
+/**
+ * \page page_py_d2d_function approximate_function_double
+ *
+ * Dirac-to-Dirac reduction with custom weight functions.
+ *
+ * This variant allows user-defined Python callbacks
+ * to compute position-dependent weights and their derivatives.
+ *
+ * Useful for:
+ *
+ * - Structure-aware reduction
+ * - Context-dependent weighting
+ * - Experimental extensions
+ *
+ * \section required_callbacks Required Callbacks
+ *
+ * - wX(x): returns weight
+ * - wXD(x): returns gradient of weight
+ *
+ * \section example Example
+ *
+ * \code{.py}
+ * def wX(x):
+ *     return np.exp(-np.sum(x**2))
+ *
+ * def wXD(x):
+ *     return -2 * x * np.exp(-np.sum(x**2))
+ *
+ * result = d2d.approximate_function_double(
+ *     y, M, L, N, x,
+ *     wX=wX,
+ *     wXD=wXD
+ * )
+ * \endcode
+ *
+ */
+
+
+
+/**
+ * \page page_py_d2d_distance Distance and Gradient
+ *
+ * Evaluate approximation quality.
+ *
+ * The following methods are available:
+ *
+ * - modified_van_mises_distance_sq
+ * - modified_van_mises_distance_sq_derivative
+ *
+ * These allow integration into:
+ *
+ * - Custom optimizers
+ * - Machine learning workflows
+ * - Gradient-based pipelines
+ *
+ * \section example Example
+ *
+ * \code{.py}
+ * distance = d2d.approximate_double.modified_van_mises_distance_sq(
+ *     y, M, L, N, x
+ * )
+ *
+ * gradient = d2d.approximate_double.modified_van_mises_distance_sq_derivative(
+ *     y, M, L, N, x
+ * )
+ * \endcode
+ *
+ */
+
+
+
+/**
+ * \page page_py_gm GaussianToDiracApproximation
+ *
+ * Python interface for Gaussian-to-Dirac approximation.
+ *
+ * Approximates a multivariate Gaussian distribution
+ * using L deterministic Dirac support points.
+ *
+ * \section variants Available Variants
+ *
+ * - \ref page_py_gm_cov
+ * - \ref page_py_gm_snd
+ *
+ */
+
+
+
+/**
+ * \page page_py_gm_cov approximate_double (Covariance Matrix)
+ *
+ * Gaussian-to-Dirac approximation using full covariance matrix.
+ *
+ * The covariance matrix is internally diagonalized.
+ * The optimized support points are automatically
+ * transformed back into the original coordinate system.
+ *
+ * \section parameters Parameters
+ *
+ * - Sigma: Covariance matrix (N x N)
+ * - L: Number of Dirac components
+ * - N: Dimension
+ * - x: Output buffer (L x N)
+ *
+ * \section example Example
+ *
+ * \code{.py}
+ * Sigma = np.array([[2.0, 0.5],
+ *                   [0.5, 2.0]])
+ *
+ * g2d = dgs.GaussianToDiracApproximation()
+ * result = g2d.approximate_double(Sigma, L, N, x)
+ * \endcode
+ *
+ */
+
+
+
+/**
+ * \page page_py_gm_snd approximate_snd_double
+ *
+ * Gaussian-to-Dirac approximation for standard normal case.
+ *
+ * Assumes standardized Gaussian structure
+ * (identity covariance).
+ *
+ * Recommended when:
+ *
+ * - Covariance is identity
+ * - Standardized Gaussian structures are used
+ *
+ * \section example Example
+ *
+ * \code{.py}
+ * result = g2d.approximate_snd_double(L, N, x)
+ * \endcode
+ *
+ */
+
+
+
+/**
+ * \page page_py_gm_distance Gaussian Distance and Gradient
+ *
+ * Evaluate distance and gradient for
+ * Gaussian-to-Dirac approximation.
+ *
+ * Enables:
+ *
+ * - Diagnostic evaluation
+ * - Custom optimization loops
+ * - Gradient-based experimentation
+ *
+ * \section example Example
+ *
+ * \code{.py}
+ * distance = g2d.approximate_double.modified_van_mises_distance_sq(
+ *     Sigma, L, N, x
+ * )
+ *
+ * gradient = g2d.approximate_double.modified_van_mises_distance_sq_derivative(
+ *     Sigma, L, N, x
+ * )
+ * \endcode
+ *
+ */

@@ -6,6 +6,13 @@ from typing import Optional
 from .base_approximation import BaseApproximation
 
 class _ApproximateDouble:
+    """
+    Gaussian-to-Dirac approximation with covariance matrix.
+
+    The covariance matrix is internally diagonalized.
+    The optimized points are transformed back to
+    the original coordinate system.
+    """
     def __init__(self, parent):
         self._parent = parent
 
@@ -18,6 +25,27 @@ class _ApproximateDouble:
         wX: Optional[numpy.ndarray] = None,
         options: Optional[python_variant.ApproximateOptionsPy] = None,
     ) -> python_variant.ApproximationResultPy:
+        """
+        Approximate Gaussian distribution by L Dirac points.
+
+        Parameters
+        ----------
+        cov : numpy.ndarray
+            Covariance matrix (N x N).
+        L : int
+            Number of Dirac components.
+        N : int
+            Dimension.
+        x : numpy.ndarray
+            Initial guess (L x N).
+        wX : numpy.ndarray, optional
+            Dirac weights.
+
+        Returns
+        -------
+        ApproximationResultPy
+            Result containing optimized Dirac points.
+        """
         cdll = self._parent.cdll
         if cdll is None:
             raise OSError("C++-Library was not loaded. Unable to continue!!!")
@@ -102,6 +130,11 @@ class _ApproximateDouble:
         return gradient
 
 class _ApproximateSNDDouble:
+    """
+    Gaussian-to-Dirac approximation for standard normal deviation case.
+
+    Assumes standardized Gaussian structure.
+    """
     def __init__(self, parent):
         self._parent = parent
 
@@ -113,6 +146,23 @@ class _ApproximateSNDDouble:
         wX: Optional[numpy.ndarray] = None,
         options: Optional[python_variant.ApproximateOptionsPy] = None,
     ) -> python_variant.ApproximationResultPy:
+        """
+        Approximate standard normal Gaussian with L Dirac points.
+
+        Parameters
+        ----------
+        L : int
+            Number of Dirac components.
+        N : int
+            Dimension.
+        x : numpy.ndarray
+            Initial guess (L x N).
+
+        Returns
+        -------
+        ApproximationResultPy
+            Optimization result.
+        """
         cdll = self._parent.cdll
         if cdll is None:
             raise OSError("C++-Library was not loaded. Unable to continue!!!")
@@ -187,6 +237,18 @@ class _ApproximateSNDDouble:
         return gradient
 
 class GaussianToDiracApproximation(BaseApproximation):
+    """
+    Gaussian-to-Dirac approximation interface.
+
+    Python wrapper around the C++ Gaussian approximation backend.
+
+    Provides:
+
+    - Diagonal covariance Gaussian approximation
+    - Standard normal deviation variant
+    - Distance evaluation
+    - Analytical gradient computation
+    """
     def __init__(self):
         super().__init__()
         cdll = self.__class__.cdll
