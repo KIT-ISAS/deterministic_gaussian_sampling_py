@@ -5,28 +5,11 @@ import numpy
 from typing import Optional
 from .base_approximation import BaseApproximation
 
+class _ApproximateDouble:
+    def __init__(self, parent):
+        self._parent = parent
 
-class GaussianToDiracApproximation(BaseApproximation):
-    def __init__(self):
-        super().__init__()
-        cdll = self.__class__.cdll
-        if cdll is None:
-            raise OSError("C++-Library was not loaded. Unable to continue!!!")
-        self.gm_to_dirac_double = cdll.create_gm_to_dirac_short_double()
-        self.gm_to_dirac_snd_double = (
-            cdll.create_gm_to_dirac_short_standard_normal_deviation_double()
-        )
-
-    def __del__(self):
-        cdll = self.__class__.cdll
-        if cdll is None:
-            return
-        cdll.delete_gm_to_dirac_short_double(self.gm_to_dirac_double)
-        cdll.delete_gm_to_dirac_short_standard_normal_deviation_double(
-            self.gm_to_dirac_snd_double
-        )
-
-    def approximate_double(
+    def __call__(
         self,
         cov: numpy.ndarray,
         L: int,
@@ -35,15 +18,15 @@ class GaussianToDiracApproximation(BaseApproximation):
         wX: Optional[numpy.ndarray] = None,
         options: Optional[python_variant.ApproximateOptionsPy] = None,
     ) -> python_variant.ApproximationResultPy:
-        cdll = self.__class__.cdll
+        cdll = self._parent.cdll
         if cdll is None:
             raise OSError("C++-Library was not loaded. Unable to continue!!!")
-        covData = self._check_covariance_matrix(cov, N)
-        xChecked = self._check_numpy_ndarray(x, L, N)
-        wXChecked = self._check_weights(wX, L)
+        covData = self._parent._check_covariance_matrix(cov, N)
+        xChecked = self._parent._check_numpy_ndarray(x, L, N)
+        wXChecked = self._parent._check_weights(wX, L)
         minimizer_result = ctypes_wrapper.GslMinimizerResultCTypes()
         success = cdll.gm_to_dirac_short_double_approximate(
-            self.gm_to_dirac_double,
+            self._parent.gm_to_dirac_double,
             covData.sqrt_eigvals.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
@@ -62,8 +45,67 @@ class GaussianToDiracApproximation(BaseApproximation):
         )
         result.x = result.x @ covData.Q.T
         return result
+    
+    def modified_van_mises_distance_sq(
+        self,
+        cov: numpy.ndarray,
+        L: int,
+        N: int,
+        x: numpy.ndarray,
+        wX: Optional[numpy.ndarray] = None
+    ) -> float:
+        cdll = self._parent.cdll
+        if cdll is None:
+            raise OSError("C++-Library was not loaded. Unable to continue!!!")
+        covData = self._parent._check_covariance_matrix(cov, N)
+        xChecked = self._parent._check_numpy_ndarray(x, L, N)
+        wXChecked = self._parent._check_weights(wX, L)
+        result = ctypes.c_double(0.0)
+        cdll.gm_to_dirac_short_double_modified_van_mises_distance_sq(
+            self._parent.gm_to_dirac_double,
+            covData.sqrt_eigvals.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            ctypes.byref(result),
+            ctypes.c_size_t(L),
+            ctypes.c_size_t(N),
+            ctypes.c_size_t(100),
+            xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        )
+        return result.value
+    
+    def modified_van_mises_distance_sq_derivative(
+        self,
+        cov: numpy.ndarray,
+        L: int,
+        N: int,
+        x: numpy.ndarray,
+        wX: Optional[numpy.ndarray] = None
+    ) -> float:
+        cdll = self._parent.cdll
+        if cdll is None:
+            raise OSError("C++-Library was not loaded. Unable to continue!!!")
+        covData = self._parent._check_covariance_matrix(cov, N)
+        xChecked = self._parent._check_numpy_ndarray(x, L, N)
+        wXChecked = self._parent._check_weights(wX, L)
+        gradient = numpy.zeros((L, N))
+        gradientChecked = self._parent._check_numpy_ndarray(gradient, L, N)
+        cdll.gm_to_dirac_short_double_modified_van_mises_distance_sq_derivative(
+            self._parent.gm_to_dirac_double,
+            covData.sqrt_eigvals.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            gradientChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            ctypes.c_size_t(L),
+            ctypes.c_size_t(N),
+            ctypes.c_size_t(100),
+            xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        )
+        return gradient
 
-    def approximate_snd_double(
+class _ApproximateSNDDouble:
+    def __init__(self, parent):
+        self._parent = parent
+
+    def __call__(
         self,
         L: int,
         N: int,
@@ -71,14 +113,14 @@ class GaussianToDiracApproximation(BaseApproximation):
         wX: Optional[numpy.ndarray] = None,
         options: Optional[python_variant.ApproximateOptionsPy] = None,
     ) -> python_variant.ApproximationResultPy:
-        cdll = self.__class__.cdll
+        cdll = self._parent.cdll
         if cdll is None:
             raise OSError("C++-Library was not loaded. Unable to continue!!!")
-        xChecked = self._check_numpy_ndarray(x, L, N)
-        wXChecked = self._check_weights(wX, L)
+        xChecked = self._parent._check_numpy_ndarray(x, L, N)
+        wXChecked = self._parent._check_weights(wX, L)
         minimizer_result = ctypes_wrapper.GslMinimizerResultCTypes()
         success = cdll.gm_to_dirac_short_standard_normal_deviation_double_approximate(
-            self.gm_to_dirac_snd_double,
+            self._parent.gm_to_dirac_snd_double,
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
             ctypes.c_size_t(100),
@@ -93,4 +135,76 @@ class GaussianToDiracApproximation(BaseApproximation):
         )
         return python_variant.ApproximationResultPy.from_ctypes(
             success, minimizer_result, x, L, N
+        )
+    
+    def modified_van_mises_distance_sq(
+        self,
+        L: int,
+        N: int,
+        x: numpy.ndarray,
+        wX: Optional[numpy.ndarray] = None
+    ) -> float:
+        cdll = self._parent.cdll
+        if cdll is None:
+            raise OSError("C++-Library was not loaded. Unable to continue!!!")
+        xChecked = self._parent._check_numpy_ndarray(x, L, N)
+        wXChecked = self._parent._check_weights(wX, L)
+        result = ctypes.c_double(0.0)
+        cdll.gm_to_dirac_short_standard_normal_deviation_double_modified_van_mises_distance_sq(
+            self._parent.gm_to_dirac_snd_double,
+            ctypes.byref(result),
+            ctypes.c_size_t(L),
+            ctypes.c_size_t(N),
+            ctypes.c_size_t(100),
+            xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        )
+        return result.value
+    
+    def modified_van_mises_distance_sq_derivative(
+        self,
+        L: int,
+        N: int,
+        x: numpy.ndarray,
+        wX: Optional[numpy.ndarray] = None
+    ) -> numpy.ndarray:
+        cdll = self._parent.cdll
+        if cdll is None:
+            raise OSError("C++-Library was not loaded. Unable to continue!!!")
+        xChecked = self._parent._check_numpy_ndarray(x, L, N)
+        wXChecked = self._parent._check_weights(wX, L)
+        gradient = numpy.zeros((L, N))
+        gradientChecked = self._parent._check_numpy_ndarray(gradient, L, N)
+        cdll.gm_to_dirac_short_standard_normal_deviation_double_modified_van_mises_distance_sq_derivative(
+            self._parent.gm_to_dirac_snd_double,
+            gradientChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            ctypes.c_size_t(L),
+            ctypes.c_size_t(N),
+            ctypes.c_size_t(100),
+            xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        )
+        return gradient
+
+class GaussianToDiracApproximation(BaseApproximation):
+    def __init__(self):
+        super().__init__()
+        cdll = self.__class__.cdll
+        if cdll is None:
+            raise OSError("C++-Library was not loaded. Unable to continue!!!")
+        self.gm_to_dirac_double = cdll.create_gm_to_dirac_short_double()
+        self.gm_to_dirac_snd_double = (
+            cdll.create_gm_to_dirac_short_standard_normal_deviation_double()
+        )
+
+        self.approximate_double = _ApproximateDouble(self)
+        self.approximate_snd_double = _ApproximateSNDDouble(self)
+
+    def __del__(self):
+        cdll = self.__class__.cdll
+        if cdll is None:
+            return
+        cdll.delete_gm_to_dirac_short_double(self.gm_to_dirac_double)
+        cdll.delete_gm_to_dirac_short_standard_normal_deviation_double(
+            self.gm_to_dirac_snd_double
         )
