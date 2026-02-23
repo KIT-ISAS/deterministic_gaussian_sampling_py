@@ -164,6 +164,35 @@ del g2d
 
 The covariance matrix is internally diagonalized and the optimized points are automatically transformed back into the original coordinate system.
 
+## Optimizer Options
+
+Addiotional parameters allow you to control the optimization process.
+In case of the approximation of a standard Gaussian, options are passed in form of settings class:
+
+```python
+import deterministic_gaussian_sampling
+import numpy as np
+
+N = 2
+L = 12
+
+g2d = deterministic_gaussian_sampling.GaussianToDiracApproximation()
+options = deterministic_gaussian_sampling.ApproximateOptionsPy(
+        ftolAbs=1e-15, # absolute function value tolerance # Default: 0 (ignored)
+        ftolRel=1e-15, # relative function value tolerance # Default: 0 (ignored)
+        xtolAbs=1e-15, # absolute parameter change tolerance # Default: 0 (ignored)
+        xtolRel=1e-15, # relative parameter change tolerance # Default: 1e-10 
+        gtol=1e-15, # gradient norm tolerance # Default: 1e-10
+        maxIterations=1000, # maximum number of iterations # Default: 10000
+        initialX=False, # use 'approx' as iniitial solotion for optimization  # Default: False (if True, the initial points are used as starting point for optimization, otherwise they are ignored and the optimization starts with a default initialization)
+        verbose=True, # enable verbose output during optimization # Default: False
+    )
+
+approx = np.empty((L, N))
+result = g2d.approximate_snd_double(L, N, approx, options=options)
+result.x # contains the optimized points
+```
+
 ---
 
 # Distance and Gradient
