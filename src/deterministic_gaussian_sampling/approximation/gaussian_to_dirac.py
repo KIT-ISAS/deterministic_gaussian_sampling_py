@@ -58,7 +58,6 @@ class _ApproximateDouble:
             covData.sqrt_eigvals.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
-            ctypes.c_size_t(100),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             ctypes.byref(minimizer_result),
@@ -95,7 +94,6 @@ class _ApproximateDouble:
             ctypes.byref(result),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
-            ctypes.c_size_t(100),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
         )
@@ -123,7 +121,6 @@ class _ApproximateDouble:
             gradientChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
-            ctypes.c_size_t(100),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
         )
@@ -173,7 +170,6 @@ class _ApproximateSNDDouble:
             self._parent.gm_to_dirac_snd_double,
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
-            ctypes.c_size_t(100),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             ctypes.byref(minimizer_result),
@@ -205,7 +201,6 @@ class _ApproximateSNDDouble:
             ctypes.byref(result),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
-            ctypes.c_size_t(100),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
         )
@@ -230,7 +225,6 @@ class _ApproximateSNDDouble:
             gradientChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
-            ctypes.c_size_t(100),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
         )

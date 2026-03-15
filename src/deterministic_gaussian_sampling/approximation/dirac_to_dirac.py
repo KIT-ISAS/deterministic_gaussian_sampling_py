@@ -69,7 +69,6 @@ class _ApproximateDouble:
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
-            ctypes.c_size_t(100),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wYChecked is None else wYChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
@@ -126,7 +125,6 @@ class _ApproximateDouble:
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
-            ctypes.c_size_t(100),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wYChecked is None else wYChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
@@ -174,7 +172,6 @@ class _ApproximateDouble:
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
-            ctypes.c_size_t(100),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wYChecked is None else wYChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
@@ -231,7 +228,6 @@ class _ApproximateFunctionDouble:
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
-            ctypes.c_size_t(100),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             wX,
             wXD,
@@ -286,7 +282,6 @@ class _ApproximateFunctionDouble:
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
-            ctypes.c_size_t(100),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             wX,
             wXD
@@ -332,7 +327,6 @@ class _ApproximateFunctionDouble:
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
-            ctypes.c_size_t(100),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             wX,
             wXD
@@ -402,7 +396,6 @@ class _ApproximateThreadDouble:
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
-            ctypes.c_size_t(100),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wYChecked is None else wYChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
@@ -459,7 +452,6 @@ class _ApproximateThreadDouble:
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
-            ctypes.c_size_t(100),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wYChecked is None else wYChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
@@ -507,7 +499,6 @@ class _ApproximateThreadDouble:
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
-            ctypes.c_size_t(100),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wYChecked is None else wYChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double))

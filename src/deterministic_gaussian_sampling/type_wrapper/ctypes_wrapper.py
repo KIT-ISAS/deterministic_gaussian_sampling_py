@@ -76,6 +76,7 @@ class ApproximateOptionsCTypes(ctypes.Structure):
         ("initialX", ctypes.c_bool),
         ("maxIterations", ctypes.c_size_t),
         ("verbose", ctypes.c_bool),
+        ("bMax", ctypes.c_size_t),
     ]
 
     @staticmethod
@@ -90,6 +91,7 @@ class ApproximateOptionsCTypes(ctypes.Structure):
             ctypes.c_bool(pyT.initialX),
             ctypes.c_size_t(pyT.maxIterations),
             ctypes.c_bool(pyT.verbose),
+            ctypes.c_size_t(pyT.bMax),
         )
 
     def to_py_type(self):
@@ -103,6 +105,7 @@ class ApproximateOptionsCTypes(ctypes.Structure):
             bool(self.initialX),
             int(self.maxIterations),
             bool(self.verbose),
+            int(self.bMax),
         )
 
 
