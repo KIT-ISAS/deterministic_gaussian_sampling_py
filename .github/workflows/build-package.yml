@@ -147,5 +147,5 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "Update deterministicGaussianSampling shared libraries"
-            git push
+            git push origin HEAD:main
           fi
