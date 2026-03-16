@@ -134,7 +134,7 @@ jobs:
       - name: build package
         run: python -m build
 
-      - name: Publish to TestPyPI
+      - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
       - name: commit shared libraries
