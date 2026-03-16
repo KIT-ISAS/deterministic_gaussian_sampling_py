@@ -114,6 +114,7 @@ class ApproximateOptionsPy:
     initialX: bool
     maxIterations: int
     verbose: bool
+    bMax: int
 
     def __str__(self):
         lines = []
@@ -126,6 +127,7 @@ class ApproximateOptionsPy:
         lines.append(f"   initialX:   {self.initialX}")
         lines.append(f"   maxIterations:   {self.maxIterations}")
         lines.append(f"   verbose:   {self.verbose}")
+        lines.append(f"   bMax:   {self.bMax}")
         return "\n".join(lines)
 
     __repr__ = __str__

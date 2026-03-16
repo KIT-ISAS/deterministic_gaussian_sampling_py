@@ -32,7 +32,6 @@ def _setup_ctypes_dll(cdll: ctypes.CDLL) -> ctypes.CDLL:
         c_size,      # M
         c_size,      # L
         c_size,      # N
-        c_size,      # bMax
         c_double_p,  # x
         c_double_p,  # wX
         c_double_p,  # wY
@@ -82,7 +81,6 @@ def _setup_ctypes_dll(cdll: ctypes.CDLL) -> ctypes.CDLL:
     cdll.dirac_to_dirac_approx_short_function_double_approximate.argtypes = [
         c_void_p,
         c_double_p,
-        c_size,
         c_size,
         c_size,
         c_size,
@@ -138,7 +136,6 @@ def _setup_ctypes_dll(cdll: ctypes.CDLL) -> ctypes.CDLL:
         c_size,
         c_size,
         c_size,
-        c_size,
         c_double_p,
         c_double_p,
         c_double_p,
@@ -190,7 +187,6 @@ def _setup_ctypes_dll(cdll: ctypes.CDLL) -> ctypes.CDLL:
         c_double_p,  # sqrt eigenvalues
         c_size,
         c_size,
-        c_size,
         c_double_p,
         c_double_p,
         gsl_result_p,
@@ -234,7 +230,6 @@ def _setup_ctypes_dll(cdll: ctypes.CDLL) -> ctypes.CDLL:
     cdll.gm_to_dirac_short_standard_normal_deviation_double_approximate.restype = c_bool
     cdll.gm_to_dirac_short_standard_normal_deviation_double_approximate.argtypes = [
         c_void_p,
-        c_size,
         c_size,
         c_size,
         c_double_p,
