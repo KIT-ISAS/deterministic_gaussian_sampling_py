@@ -93,7 +93,8 @@ class _ApproximateDouble:
         N: int,
         x: numpy.ndarray,
         wX: Optional[numpy.ndarray] = None,
-        wY: Optional[numpy.ndarray] = None
+        wY: Optional[numpy.ndarray] = None,
+        bMax: int = 100
     ) -> float:
         """
         Compute squared modified van Mises distance.
@@ -125,6 +126,7 @@ class _ApproximateDouble:
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
+            ctypes.c_size_t(bMax),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wYChecked is None else wYChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
@@ -139,7 +141,8 @@ class _ApproximateDouble:
         N: int,
         x: numpy.ndarray,
         wX: Optional[numpy.ndarray] = None,
-        wY: Optional[numpy.ndarray] = None
+        wY: Optional[numpy.ndarray] = None,
+        bMax: int = 100
     ) -> numpy.ndarray:
         """
         Compute analytical gradient of squared distance.
@@ -172,6 +175,7 @@ class _ApproximateDouble:
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
+            ctypes.c_size_t(bMax),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wYChecked is None else wYChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
@@ -252,7 +256,8 @@ class _ApproximateFunctionDouble:
         N: int,
         x: numpy.ndarray,
         wX: python_variant.wXCallbackPythonType,
-        wXD: python_variant.wXDCallbackPythonType
+        wXD: python_variant.wXDCallbackPythonType,
+        bMax: int = 100
     ) -> float:
         """
         Compute squared modified van Mises distance.
@@ -275,6 +280,8 @@ class _ApproximateFunctionDouble:
         yChecked = self._parent._check_numpy_ndarray(y, M, N)
         xChecked = self._parent._check_numpy_ndarray(x, L, N)
         result = ctypes.c_double(0.0)
+        wX = python_variant.wx_callback_python_wrapper(wX)
+        wXD = python_variant.wxd_callback_python_wrapper(wXD)
         cdll.dirac_to_dirac_approx_short_function_double_modified_van_mises_distance_sq(
             self._parent.d2d_func_double,
             ctypes.byref(result),
@@ -282,6 +289,7 @@ class _ApproximateFunctionDouble:
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
+            ctypes.c_size_t(bMax),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             wX,
             wXD
@@ -296,7 +304,8 @@ class _ApproximateFunctionDouble:
         N: int,
         x: numpy.ndarray,
         wX: python_variant.wXCallbackPythonType,
-        wXD: python_variant.wXDCallbackPythonType
+        wXD: python_variant.wXDCallbackPythonType,
+        bMax: int = 100
     ) -> numpy.ndarray:
         """
         Compute analytical gradient of squared distance.
@@ -320,6 +329,8 @@ class _ApproximateFunctionDouble:
         xChecked = self._parent._check_numpy_ndarray(x, L, N)
         gradient = numpy.zeros((L, N))
         gradientChecked = self._parent._check_numpy_ndarray(gradient, L, N)
+        wX = python_variant.wx_callback_python_wrapper(wX)
+        wXD = python_variant.wxd_callback_python_wrapper(wXD)
         cdll.dirac_to_dirac_approx_short_function_double_modified_van_mises_distance_sq_derivative(
             self._parent.d2d_func_double,
             gradientChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
@@ -327,6 +338,7 @@ class _ApproximateFunctionDouble:
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
+            ctypes.c_size_t(bMax),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             wX,
             wXD
@@ -420,7 +432,8 @@ class _ApproximateThreadDouble:
         N: int,
         x: numpy.ndarray,
         wX: Optional[numpy.ndarray] = None,
-        wY: Optional[numpy.ndarray] = None
+        wY: Optional[numpy.ndarray] = None,
+        bMax: int = 100
     ) -> float:
         """
         Compute squared modified van Mises distance.
@@ -452,6 +465,7 @@ class _ApproximateThreadDouble:
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
+            ctypes.c_size_t(bMax),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wYChecked is None else wYChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
@@ -466,7 +480,8 @@ class _ApproximateThreadDouble:
         N: int,
         x: numpy.ndarray,
         wX: Optional[numpy.ndarray] = None,
-        wY: Optional[numpy.ndarray] = None
+        wY: Optional[numpy.ndarray] = None,
+        bMax: int = 100
     ) -> numpy.ndarray:
         """
         Compute analytical gradient of squared distance.
@@ -499,6 +514,7 @@ class _ApproximateThreadDouble:
             ctypes.c_size_t(M),
             ctypes.c_size_t(L),
             ctypes.c_size_t(N),
+            ctypes.c_size_t(bMax),
             xChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wXChecked is None else wXChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
             None if wYChecked is None else wYChecked.ctypes.data_as(ctypes.POINTER(ctypes.c_double))

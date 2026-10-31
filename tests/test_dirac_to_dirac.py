@@ -131,3 +131,51 @@ def test_dirac_approximation_threaded_invalid_inputs():
         d2dApprox.approximate_thread_double(y, 100, 0, 3, x)
     with pytest.raises(ValueError):
         d2dApprox.approximate_thread_double(y, 100, 5, 0, x)
+
+
+@pytest.mark.parametrize("method_name", [
+    "approximate_double",
+    "approximate_thread_double",
+])
+def test_dirac_distance_and_gradient(method_name, seed=42):
+    M, L, N = 100, 5, 2
+    np.random.seed(seed)
+    x = np.random.rand(L, N)
+    y = np.random.rand(M, N)
+    d2dApprox = deterministic_gaussian_sampling.DiracToDiracApproximation()
+    method = getattr(d2dApprox, method_name)
+    r = method(y, M, L, N, x)
+
+    d_opt = method.modified_van_mises_distance_sq(y, M, L, N, r.x)
+    d_shifted = method.modified_van_mises_distance_sq(y, M, L, N, r.x + 5.0)
+    assert np.isfinite(d_opt)
+    assert d_opt < d_shifted
+
+    d_opt_50 = method.modified_van_mises_distance_sq(y, M, L, N, r.x, bMax=50)
+    assert np.isfinite(d_opt_50)
+
+    grad = method.modified_van_mises_distance_sq_derivative(y, M, L, N, r.x)
+    assert grad.shape == (L, N)
+    assert np.all(np.isfinite(grad))
+
+
+def test_dirac_function_distance_and_gradient(seed=42):
+    M, L, N = 100, 5, 2
+    np.random.seed(seed)
+    x = np.random.rand(L, N)
+    y = np.random.rand(M, N)
+    d2dApprox = deterministic_gaussian_sampling.DiracToDiracApproximation()
+    func = d2dApprox.approximate_function_double
+
+    # uniform weights with vanishing derivative
+    wX = lambda x, L, N: np.full(L, 1.0 / L)
+    wXD = lambda x, L, N: np.zeros((L, N))
+
+    d = func.modified_van_mises_distance_sq(y, M, L, N, x, wX, wXD)
+    d_shifted = func.modified_van_mises_distance_sq(y, M, L, N, x + 5.0, wX, wXD)
+    assert np.isfinite(d)
+    assert d < d_shifted
+
+    grad = func.modified_van_mises_distance_sq_derivative(y, M, L, N, x, wX, wXD)
+    assert grad.shape == (L, N)
+    assert np.all(np.isfinite(grad))

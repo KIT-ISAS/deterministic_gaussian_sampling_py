@@ -96,6 +96,14 @@ class BaseApproximation:
             raise ValueError(f"Sum of weights must be 1 within tolerance +/-{tol}, but got {numpy.sum(wChecked)}")
         return wChecked
 
+    def _check_even_dimension(self, N: int):
+        if N < 2 or N % 2 != 0:
+            raise ValueError(f"Dimension N must be even and >= 2, but got {N}")
+
+    def _check_positive(self, value: float, name: str):
+        if not value > 0:
+            raise ValueError(f"{name} must be positive, but got {value}")
+
     @staticmethod
     def _register_cdll(cdll: ctypes.CDLL):
         BaseApproximation.cdll = cdll
