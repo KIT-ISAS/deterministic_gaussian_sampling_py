@@ -260,6 +260,116 @@ def _setup_ctypes_dll(cdll: ctypes.CDLL) -> ctypes.CDLL:
         c_double_p,
     ]
 
+    # ============================================================ #
+    # =========== GAUSSIAN to DIRAC (even closed form) =========== #
+    # ============================================================ #
+
+    cdll.create_gm_to_dirac_even_closed_form_double.restype = c_void_p
+    cdll.create_gm_to_dirac_even_closed_form_double.argtypes = []
+
+    cdll.delete_gm_to_dirac_even_closed_form_double.restype = None
+    cdll.delete_gm_to_dirac_even_closed_form_double.argtypes = [c_void_p]
+
+    cdll.gm_to_dirac_even_closed_form_double_approximate.restype = c_bool
+    cdll.gm_to_dirac_even_closed_form_double_approximate.argtypes = [
+        c_void_p,
+        c_size,           # L
+        c_size,           # N
+        ctypes.c_double,  # bMax
+        c_double_p,       # x
+        c_double_p,       # wX
+        gsl_result_p,
+        approx_opts_p,
+    ]
+
+    cdll.gm_to_dirac_even_closed_form_double_approximate_isotropic.restype = c_bool
+    cdll.gm_to_dirac_even_closed_form_double_approximate_isotropic.argtypes = [
+        c_void_p,
+        c_size,           # L
+        c_size,           # N
+        ctypes.c_double,  # sigma
+        ctypes.c_double,  # bMax
+        c_double_p,       # x
+        c_double_p,       # wX
+        gsl_result_p,
+        approx_opts_p,
+    ]
+
+    cdll.gm_to_dirac_even_closed_form_double_modified_van_mises_distance_sq.restype = None
+    cdll.gm_to_dirac_even_closed_form_double_modified_van_mises_distance_sq.argtypes = [
+        c_void_p,
+        c_double_p,       # distance
+        c_size,           # L
+        c_size,           # N
+        ctypes.c_double,  # bMax
+        c_double_p,       # x
+        c_double_p,       # wX
+    ]
+
+    cdll.gm_to_dirac_even_closed_form_double_modified_van_mises_distance_sq_derivative.restype = None
+    cdll.gm_to_dirac_even_closed_form_double_modified_van_mises_distance_sq_derivative.argtypes = [
+        c_void_p,
+        c_double_p,       # gradient
+        c_size,           # L
+        c_size,           # N
+        ctypes.c_double,  # bMax
+        c_double_p,       # x
+        c_double_p,       # wX
+    ]
+
+    cdll.gm_to_dirac_even_closed_form_double_modified_van_mises_distance_sq_isotropic.restype = None
+    cdll.gm_to_dirac_even_closed_form_double_modified_van_mises_distance_sq_isotropic.argtypes = [
+        c_void_p,
+        c_double_p,       # distance
+        c_size,           # L
+        c_size,           # N
+        ctypes.c_double,  # sigma
+        ctypes.c_double,  # bMax
+        c_double_p,       # x
+        c_double_p,       # wX
+    ]
+
+    # ============================================================ #
+    # ====== GAUSSIAN to DIRAC (even closed form, bMax-free) ===== #
+    # ============================================================ #
+
+    cdll.create_gm_to_dirac_even_binf_double.restype = c_void_p
+    cdll.create_gm_to_dirac_even_binf_double.argtypes = []
+
+    cdll.delete_gm_to_dirac_even_binf_double.restype = None
+    cdll.delete_gm_to_dirac_even_binf_double.argtypes = [c_void_p]
+
+    cdll.gm_to_dirac_even_binf_double_approximate.restype = c_bool
+    cdll.gm_to_dirac_even_binf_double_approximate.argtypes = [
+        c_void_p,
+        c_size,      # L
+        c_size,      # N
+        c_double_p,  # x
+        c_double_p,  # wX
+        gsl_result_p,
+        approx_opts_p,
+    ]
+
+    cdll.gm_to_dirac_even_binf_double_modified_van_mises_distance_sq.restype = None
+    cdll.gm_to_dirac_even_binf_double_modified_van_mises_distance_sq.argtypes = [
+        c_void_p,
+        c_double_p,  # distance
+        c_size,      # L
+        c_size,      # N
+        c_double_p,  # x
+        c_double_p,  # wX
+    ]
+
+    cdll.gm_to_dirac_even_binf_double_modified_van_mises_distance_sq_derivative.restype = None
+    cdll.gm_to_dirac_even_binf_double_modified_van_mises_distance_sq_derivative.argtypes = [
+        c_void_p,
+        c_double_p,  # gradient
+        c_size,      # L
+        c_size,      # N
+        c_double_p,  # x
+        c_double_p,  # wX
+    ]
+
     return cdll
 
 

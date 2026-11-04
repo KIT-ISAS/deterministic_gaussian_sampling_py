@@ -117,3 +117,163 @@ def test_full_covariance_approximation(L, N, seed=42):
 
     _compare_stats(cov, result.x)
 
+
+# --------------------------------------------------
+# Distance / Gradient Evaluation
+# --------------------------------------------------
+
+def test_snd_distance_and_gradient(seed=42):
+    L, N = 30, 2
+
+    np.random.seed(seed)
+    x = np.random.rand(L, N).astype(np.float64)
+
+    g2dApprox = deterministic_gaussian_sampling.GaussianToDiracApproximation()
+    snd = g2dApprox.approximate_snd_double
+    r = snd(L, N, x)
+
+    d_opt = snd.modified_van_mises_distance_sq(L, N, r.x)
+    d_rand = snd.modified_van_mises_distance_sq(L, N, np.random.randn(L, N))
+    assert np.isfinite(d_opt)
+    assert np.isfinite(d_rand)
+    assert d_opt < d_rand
+
+    d_opt_50 = snd.modified_van_mises_distance_sq(L, N, r.x, bMax=50)
+    assert np.isfinite(d_opt_50)
+    assert d_opt_50 != d_opt
+
+    grad = snd.modified_van_mises_distance_sq_derivative(L, N, r.x)
+    assert grad.shape == (L, N)
+    assert np.all(np.isfinite(grad))
+
+
+def test_full_covariance_distance_and_gradient(seed=42):
+    L, N = 30, 3
+
+    # create covariance matrix
+    np.random.seed(seed)
+    A = np.random.randn(N, N)
+    cov = A @ A.T + 0.5 * np.eye(N)
+
+    # random x values
+    x = np.random.rand(L, N).astype(np.float64)
+
+    g2dApprox = deterministic_gaussian_sampling.GaussianToDiracApproximation()
+    full = g2dApprox.approximate_double
+    r = full(cov, L, N, x)
+
+    d = full.modified_van_mises_distance_sq(cov, L, N, r.x)
+    assert np.isfinite(d)
+
+    grad = full.modified_van_mises_distance_sq_derivative(cov, L, N, r.x)
+    assert grad.shape == (L, N)
+    assert np.all(np.isfinite(grad))
+
+
+# --------------------------------------------------
+# Even Closed-Form Approximation
+# --------------------------------------------------
+
+@pytest.mark.parametrize("L,N", [
+    (40, 2),
+    (100, 4),
+])
+def test_even_closed_form_approximation(L, N, seed=42, bMax=100.0):
+
+    snd_cov = np.eye(N, dtype=float)
+
+    np.random.seed(seed)
+    x = np.random.rand(L, N).astype(np.float64)
+
+    g2dApprox = deterministic_gaussian_sampling.GaussianToDiracApproximation()
+    even = g2dApprox.approximate_even_double
+    r = even(L, N, bMax, x)
+
+    _compare_stats(snd_cov, r.x)
+
+    x_rand = np.random.randn(L, N)
+    d_opt = even.modified_van_mises_distance_sq(L, N, bMax, r.x)
+    d_rand = even.modified_van_mises_distance_sq(L, N, bMax, x_rand)
+    assert d_opt < d_rand
+
+    grad = even.modified_van_mises_distance_sq_derivative(L, N, bMax, x_rand)
+    assert grad.shape == (L, N)
+    assert np.all(np.isfinite(grad))
+    assert np.any(grad != 0.0)
+
+
+# --------------------------------------------------
+# Even bMax-Free Approximation
+# --------------------------------------------------
+
+@pytest.mark.parametrize("L,N", [
+    (40, 2),
+    (100, 4),
+])
+def test_even_binf_approximation(L, N, seed=42):
+
+    snd_cov = np.eye(N, dtype=float)
+
+    np.random.seed(seed)
+    x = np.random.rand(L, N).astype(np.float64)
+
+    g2dApprox = deterministic_gaussian_sampling.GaussianToDiracApproximation()
+    binf = g2dApprox.approximate_even_binf_double
+    r = binf(L, N, x)
+
+    _compare_stats(snd_cov, r.x)
+
+    x_rand = np.random.randn(L, N)
+    d_opt = binf.modified_van_mises_distance_sq(L, N, r.x)
+    d_rand = binf.modified_van_mises_distance_sq(L, N, x_rand)
+    assert d_opt < d_rand
+
+    grad = binf.modified_van_mises_distance_sq_derivative(L, N, x_rand)
+    assert grad.shape == (L, N)
+    assert np.all(np.isfinite(grad))
+
+
+# --------------------------------------------------
+# Even Invalid Input Tests
+# --------------------------------------------------
+
+def test_even_approximation_invalid_inputs():
+    g2dApprox = deterministic_gaussian_sampling.GaussianToDiracApproximation()
+    even = g2dApprox.approximate_even_double
+    binf = g2dApprox.approximate_even_binf_double
+    L = 10
+
+    # odd dimension
+    x_odd = np.random.rand(L, 3)
+    with pytest.raises(ValueError):
+        even(L, 3, 100.0, x_odd)
+    with pytest.raises(ValueError):
+        even.approximate_isotropic(L, 3, 1.0, 100.0, x_odd)
+    with pytest.raises(ValueError):
+        even.modified_van_mises_distance_sq(L, 3, 100.0, x_odd)
+    with pytest.raises(ValueError):
+        even.modified_van_mises_distance_sq_derivative(L, 3, 100.0, x_odd)
+    with pytest.raises(ValueError):
+        even.modified_van_mises_distance_sq_isotropic(L, 3, 1.0, 100.0, x_odd)
+    with pytest.raises(ValueError):
+        binf(L, 3, x_odd)
+    with pytest.raises(ValueError):
+        binf.modified_van_mises_distance_sq(L, 3, x_odd)
+    with pytest.raises(ValueError):
+        binf.modified_van_mises_distance_sq_derivative(L, 3, x_odd)
+
+    # non-positive bMax
+    x = np.random.rand(L, 2)
+    for bMax in (0.0, -1.0):
+        with pytest.raises(ValueError):
+            even(L, 2, bMax, x)
+        with pytest.raises(ValueError):
+            even.modified_van_mises_distance_sq(L, 2, bMax, x)
+        with pytest.raises(ValueError):
+            even.modified_van_mises_distance_sq_derivative(L, 2, bMax, x)
+
+    # non-positive sigma
+    with pytest.raises(ValueError):
+        even.approximate_isotropic(L, 2, 0.0, 100.0, x)
+    with pytest.raises(ValueError):
+        even.modified_van_mises_distance_sq_isotropic(L, 2, 0.0, 100.0, x)
